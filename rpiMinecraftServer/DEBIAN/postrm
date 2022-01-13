@@ -1,0 +1,5 @@
+#!/bin/bash
+
+if [[ -d "/usr/share/server/minecraft" ]]; then
+    rm -r "/usr/share/server/minecraft"
+fi

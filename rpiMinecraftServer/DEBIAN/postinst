@@ -1,0 +1,12 @@
+#!/bin/bash
+
+cd "/usr/share/server/minecraft"
+
+forgeVersion="1.12.2-14.23.5.2859"
+wget "https://maven.minecraftforge.net/net/minecraftforge/forge/${forgeVersion}/forge-${forgeVersion}-installer.jar"
+java -jar "forge-${forgeVersion}-installer.jar" --installServer
+rm "forge-${forgeVersion}-installer.jar"
+echo -n "$forgeVersion" > "./forge.version"
+java -Xmx1024M -Xms1024M -jar "forge-${forgeVersion}.jar" -nogui
+
+sed -i "s/false/true/" "./eula.txt"

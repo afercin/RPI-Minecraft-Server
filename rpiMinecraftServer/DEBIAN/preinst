@@ -1,0 +1,5 @@
+#!/bin/bash
+
+if [[ ! -d "/usr/share/server/minecraft" ]]; then
+    mkdir -p "/usr/share/server/minecraft"
+fi
