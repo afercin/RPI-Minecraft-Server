@@ -12,7 +12,7 @@ class mcBackup:
         self.mcFolder = mcFolder
         self.backupFolder = backupFolder
         self.maxBackups = maxBackups
-        self.delay = delay * 60  # Get delay time in seconds
+        self.delay = delay
         self.backupOkExit = backupOnExit
 
         self.end = True
@@ -84,6 +84,7 @@ if __name__ == "__main__":
 
     if not os.path.isdir("/tmp/world"):
         os.mkdir("/tmp/world")
+        os.system("touch /tmp/world/mundo.txt")
 
     if not os.path.isdir("/tmp/backup"):
         os.mkdir("/tmp/backup")
