@@ -41,6 +41,7 @@ class mcBackup:
 
             self.process.join()
             self.log.ok("Backup process stopped!")
+            self.log.dispose()
 
     def backupProcess(self):
         self.log.ok(
