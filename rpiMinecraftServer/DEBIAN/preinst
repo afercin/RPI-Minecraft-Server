@@ -3,3 +3,8 @@
 if [[ ! -d "/usr/share/server/minecraft" ]]; then
     mkdir -p "/usr/share/server/minecraft"
 fi
+
+if [[ ! -d "/var/log/product" ]]; then
+    mkdir -p "/var/log/product"
+    chmod 777 "/var/log/product"
+fi
