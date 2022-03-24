@@ -5,7 +5,7 @@ FOLDERS=("/usr/share/server/minecraft" "/etc/productConf" "/var/log/product")
 for folder in ${FOLDERS[@]}; do
     if [[ ! -d $folder ]]; then
         echo "Creating ${folder}"
-        mkdir "${folder}"
+        mkdir -p "${folder}"
     fi
 done
 
