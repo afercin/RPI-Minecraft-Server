@@ -11,6 +11,7 @@ class MinecraftServer:
         config.read(confFile)
 
         self.minecraftFolder = config["SERVER"]["MinecraftFolder"]
+        self.forgeVersion = config["SERVER"]["ForgeVersion"]
         self.aditionalArgs = config["SERVER"]["AditionalArgs"]
         self.maxRam = config["SERVER"]["MaxRAM"]
         self.minRam = config["SERVER"]["MinRAM"]
@@ -19,9 +20,8 @@ class MinecraftServer:
         self.outputHook = threading.Thread(target=self.getOutput)
 
     def start(self):
-        forgeVersion = "1.12.2-14.23.5.2859"
-        forgeFile = "forge-{}.jar".format(forgeVersion)
         if not self.isRunning:
+            forgeFile = "forge-{}.jar".format(self.forgeVersion)
             print("Starting minecraft server...")
 
             os.chdir(self.minecraftFolder)
