@@ -29,7 +29,7 @@ class Stop(Resource):
         if not mcserver.isRunning:
             return "Minecraft server is not running", 403
 
-        if not mcserver.isClossing:
+        if mcserver.isClossing:
             return "Minecraft server is being clossing", 403
 
         mcserver.stop()
@@ -47,6 +47,9 @@ class GetStatus(Resource):
 
         return "Closed", 200
 
+class GetOnlineUsers(Resource):
+    def get(self):
+        return mcserver.getOnlineUsers()
 
 class GetOutput(Resource):
     def get(self):
@@ -65,9 +68,10 @@ class SendCommand(Resource):
 
 api.add_resource(Start, "/start/")
 api.add_resource(Stop, "/stop/")
+api.add_resource(GetOnlineUsers, "/online-users/")
 api.add_resource(GetStatus, "/status/")
 api.add_resource(GetOutput, "/output/")
 api.add_resource(SendCommand, "/command/")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0")

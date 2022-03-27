@@ -1,4 +1,3 @@
-from logUtils import logUtils
 import subprocess
 import threading
 import os
@@ -10,13 +9,13 @@ class MinecraftServer:
     def __init__(self, confFile):
         config = configparser.ConfigParser()
         config.read(confFile)
-        self.log = logUtils(verbose=True)
 
         self.minecraftFolder = config["SERVER"]["MinecraftFolder"]
         self.forgeVersion = config["SERVER"]["ForgeVersion"]
         self.aditionalArgs = config["SERVER"]["AditionalArgs"]
         self.maxRam = config["SERVER"]["MaxRAM"]
         self.minRam = config["SERVER"]["MinRAM"]
+        self.onlineUsers = []
 
         self.reset()
         self.outputHook = threading.Thread(target=self.captureOutput)
@@ -31,7 +30,7 @@ class MinecraftServer:
         if not self.isRunning:
             self.reset()
             forgeFile = "forge-{}.jar".format(self.forgeVersion)
-            self.log.info("Starting minecraft server...")
+            print("Starting minecraft server...")
 
             os.chdir(self.minecraftFolder)
             self.minecraftProcess = subprocess.Popen(
@@ -44,7 +43,7 @@ class MinecraftServer:
                 encoding='utf-8',
                 errors='replace'
             )
-            self.log.ok("Minecraft server started!")
+            print("Minecraft server started!")
             self.isRunning = True
             self.outputHook.start()
 
@@ -52,11 +51,11 @@ class MinecraftServer:
         def stopping():
             self.sendCommand("stop")
             self.minecraftProcess.wait()
-            self.log.ok("Server stopped!")
+            print("Server stopped!")
             self.reset()
 
         if self.isRunning:
-            self.log.info("Stopping server...")
+            print("Stopping server...")
             self.isClossing = True
             time = 5
             threading.Thread(target=stopping).start()
@@ -66,13 +65,22 @@ class MinecraftServer:
             self.minecraftProcess.communicate(input="{}\n".format(command))
 
     def captureOutput(self):
+        def getUserName(output, type):
+            return output.split(": ")[1].split(type)[0]
+
         def processOutput(output):
             self.output += "{}\n".format(output)
             print(output, flush=True)
             if "[Server thread/INFO] [minecraft/DedicatedServer]: Done" in output:
                 self.isReady = True
 
-        self.log.info("Hook initialized")
+            if "joined" in output:
+                self.onlineUsers.append(getUserName(output, " joined"))
+            
+            if "left" in output:
+                self.onlineUsers.remove(getUserName(output, " left"))
+        
+        print("Hook initialized")
         while self.isRunning:
             realtime_output = self.minecraftProcess.stdout.readline()
 
@@ -84,6 +92,9 @@ class MinecraftServer:
 
     def getOutput(self):
         return self.output
+    
+    def getOnlineUsers(self):
+        return self.onlineUsers
 
 
 if __name__ == "__main__":
