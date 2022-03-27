@@ -1,7 +1,1 @@
 #!/bin/bash
-. /etc/productConf/mc.conf 2> /dev/null
-
-if [[ -d "${MinecraftFolder}" ]]; then
-    cd "${MinecraftFolder}"
-    rm -rv !(world)
-fi

@@ -1,5 +1,5 @@
 Package: RPI-Minecraft-Server
-Version: 0.1.1
+Version: 0.1.9
 Architecture: all
 Depends: openjdk-8-jdk, python3-flask-restful
 Maintainer: Internal Pointers <info@internalpointers.com>

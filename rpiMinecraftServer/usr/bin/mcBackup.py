@@ -1,4 +1,3 @@
-from logUtils import logUtils
 from datetime import datetime
 import os
 import tarfile
@@ -7,7 +6,6 @@ import threading
 
 class mcBackup:
     def __init__(self, mcFolder, backupFolder, maxBackups, delay, backupOnExit, verbose=False):
-        self.log = logUtils(verbose=verbose)
 
         self.mcFolder = mcFolder
         self.backupFolder = backupFolder
@@ -28,23 +26,22 @@ class mcBackup:
     def stop(self):
         if not self.end:
             self.cond.acquire()
-            self.log.info("Stopping backup process...")
+            print("Stopping backup process...")
 
             self.end = True
 
             if self.creatingBackup:
-                self.log.warning("Waiting for backup!")
+                print("Waiting for backup!")
             else:
                 self.cond.notify()
 
             self.cond.release()
 
             self.process.join()
-            self.log.ok("Backup process stopped!")
-            self.log.dispose()
+            print("Backup process stopped!")
 
     def backupProcess(self):
-        self.log.ok(
+        print(
             "Initialized Backup process at \"{}\"".format(self.mcFolder))
         while not self.end:
             self.cond.acquire()
@@ -55,7 +52,7 @@ class mcBackup:
                 nBackups = len(os.listdir(self.backupFolder))
 
                 if nBackups > self.maxBackups:
-                    self.log.warning("Achieved max number os backups!")
+                    print("Achieved max number os backups!")
                     self.deleteBackup()
 
                 self.createBackup()
@@ -66,17 +63,17 @@ class mcBackup:
     def deleteBackup(self):
         backups = os.listdir(self.backupFolder)
         backups.sort()
-        self.log.info("Deleting oldest backup: \"{}\"".format(backups[0]))
+        print("Deleting oldest backup: \"{}\"".format(backups[0]))
         os.remove("{}/{}".format(self.backupFolder, backups[0]))
-        self.log.ok("Deleted oldest backup!")
+        print("Deleted oldest backup!")
 
     def createBackup(self):
         name = datetime.now().strftime(format="%Y-%m-%d_%H-%M-%S")
         backupFile = "{}/{}.tar.gz".format(self.backupFolder, name)
-        self.log.info("Creating backup: \"{}\"".format(backupFile))
+        print("Creating backup: \"{}\"".format(backupFile))
         with tarfile.open(backupFile, "w:gz") as tar:
             tar.add(self.mcFolder, arcname=os.path.basename(self.mcFolder))
-        self.log.ok("Backup created!")
+        print("Backup created!")
 
 
 if __name__ == "__main__":
