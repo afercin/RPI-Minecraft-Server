@@ -1,3 +1,4 @@
+from logUtils import logUtils
 import subprocess
 import threading
 import os
@@ -9,6 +10,7 @@ class MinecraftServer:
     def __init__(self, confFile):
         config = configparser.ConfigParser()
         config.read(confFile)
+        self.log = logUtils(verbose=True)
 
         self.minecraftFolder = config["SERVER"]["MinecraftFolder"]
         self.forgeVersion = config["SERVER"]["ForgeVersion"]
@@ -22,7 +24,7 @@ class MinecraftServer:
     def start(self):
         if not self.isRunning:
             forgeFile = "forge-{}.jar".format(self.forgeVersion)
-            print("Starting minecraft server...")
+            self.log.info("Starting minecraft server...")
 
             os.chdir(self.minecraftFolder)
             self.minecraftProcess = subprocess.Popen(
@@ -35,16 +37,16 @@ class MinecraftServer:
                 encoding='utf-8',
                 errors='replace'
             )
-            print("Minecraft server started!")
+            self.log.ok("Minecraft server started!")
             self.isRunning = True
             self.outputHook.start()
 
     def stop(self):
         if self.isRunning:
-            print("Stopping server...")
+            self.log.info("Stopping server...")
             self.sendCommand("stop")
             self.minecraftProcess.wait()
-            print("Server stopped!")
+            self.log.ok("Server stopped!")
             self.isRunning = False
 
     def sendCommand(self, command):
@@ -52,7 +54,7 @@ class MinecraftServer:
             self.minecraftProcess.communicate(input="{}\n".format(command))
 
     def getOutput(self):
-        print("Hook initialized")
+        self.log.info("Hook initialized")
         while self.isRunning:
             realtime_output = self.minecraftProcess.stdout.readline()
 
@@ -64,8 +66,8 @@ class MinecraftServer:
     
     def processOutput(self, output):
         print(output, flush=True)
-        if "[Server thread/INFO] [minecraft/DedicatedServer]: Done" in output:
-            print("¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡ Mundo listo !!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        if "[Server thread/INFO] [minecraft/DedicatedServer]: Done" in output:            
+            self.log.ok("¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡ Mundo listo !!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 
 if __name__ == "__main__":
