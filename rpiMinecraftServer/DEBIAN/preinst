@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FOLDERS=("/usr/share/server/minecraft" "/etc/productConf" "/var/log/product")
+FOLDERS=("/etc/productConf" "/var/log/product")
 
 for folder in ${FOLDERS[@]}; do
     if [[ ! -d $folder ]]; then

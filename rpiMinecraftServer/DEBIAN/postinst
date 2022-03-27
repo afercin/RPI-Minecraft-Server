@@ -1,12 +1,24 @@
 #!/bin/bash
 
-cd "/usr/share/server/minecraft"
+. /etc/productConf/mc.conf 2> /dev/null
 
-forgeVersion="1.12.2-14.23.5.2860"
-wget "https://maven.minecraftforge.net/net/minecraftforge/forge/${forgeVersion}/forge-${forgeVersion}-installer.jar"
-java -jar "forge-${forgeVersion}-installer.jar" --installServer
-rm "forge-${forgeVersion}-installer.jar"
-echo -n "$forgeVersion" > "./forge.version"
-java -Xmx1024M -Xms1024M -jar "forge-${forgeVersion}.jar" -nogui
+if [[ ! -f "${MinecraftFolder}" ]]; then
+    mkdir -p "${MinecraftFolder}"
+    chmod 777 "${MinecraftFolder}"
+fi
+
+cd "${MinecraftFolder}"
+
+wget "https://maven.minecraftforge.net/net/minecraftforge/forge/${ForgeVersion}/forge-${ForgeVersion}-installer.jar"
+java -jar "forge-${ForgeVersion}-installer.jar" --installServer
+rm "forge-${ForgeVersion}-installer.jar"
+echo -n "$ForgeVersion" > "./forge.version"
+java -Xmx1024M -Xms1024M -jar "forge-${ForgeVersion}.jar" -nogui
 
 sed -i "s/false/true/" "./eula.txt"
+
+mv /tmp/server.properties .
+chmod 777 server.properties
+rm -r "${MinecraftFolder}/logs"
+mkdir "${MinecraftFolder}/logs"
+chmod 777 "${MinecraftFolder}/logs"

@@ -1,5 +1,7 @@
 #!/bin/bash
+. /etc/productConf/mc.conf 2> /dev/null
 
-if [[ -d "/usr/share/server/minecraft" ]]; then
-    rm -r "/usr/share/server/minecraft"
+if [[ -d "${MinecraftFolder}" ]]; then
+    cd "${MinecraftFolder}"
+    rm -rv !(world)
 fi
