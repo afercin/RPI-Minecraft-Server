@@ -13,12 +13,13 @@ wget "https://maven.minecraftforge.net/net/minecraftforge/forge/${ForgeVersion}/
 java -jar "forge-${ForgeVersion}-installer.jar" --installServer
 rm "forge-${ForgeVersion}-installer.jar"
 echo -n "$ForgeVersion" > "./forge.version"
-java -Xmx1024M -Xms1024M -jar "forge-${ForgeVersion}.jar" -nogui
+./run.sh
 
 sed -i "s/false/true/" "./eula.txt"
 
 mv /tmp/server.properties .
+mv /tmp/user_jvm_args.txt .
 chmod 777 server.properties
-rm -r "${MinecraftFolder}/logs"
+rm -rf "${MinecraftFolder}/logs"
 mkdir "${MinecraftFolder}/logs"
 chmod 777 "${MinecraftFolder}/logs"

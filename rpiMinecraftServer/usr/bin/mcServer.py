@@ -11,10 +11,8 @@ class MinecraftServer:
         config.read(confFile)
 
         self.minecraftFolder = config["SERVER"]["MinecraftFolder"]
-        self.forgeVersion = config["SERVER"]["ForgeVersion"]
         self.aditionalArgs = config["SERVER"]["AditionalArgs"]
-        self.maxRam = config["SERVER"]["MaxRAM"]
-        self.minRam = config["SERVER"]["MinRAM"]
+        self.forgeVersion = config["SERVER"]["ForgeVersion"]
         self.onlineUsers = []
 
         self.reset()
@@ -29,13 +27,11 @@ class MinecraftServer:
     def start(self):
         if not self.isRunning:
             self.reset()
-            forgeFile = "forge-{}.jar".format(self.forgeVersion)
             print("Starting minecraft server...")
 
             os.chdir(self.minecraftFolder)
             self.minecraftProcess = subprocess.Popen(
-                "java -Xmx{} -Xms{} {} -jar '{}' -nogui".format(
-                    self.maxRam, self.minRam, self.aditionalArgs, forgeFile),
+                f"{self.minecraftFolder}/run.sh {self.aditionalArgs}",
                 stdout=subprocess.PIPE,
                 stdin=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
