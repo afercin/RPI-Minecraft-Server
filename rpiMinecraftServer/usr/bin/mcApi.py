@@ -1,78 +1,74 @@
 #!/usr/bin/python3
-from flask import Flask
-from flask_restful import Resource, Api, reqparse
+from flask import Flask, request, jsonify
 from mcServer import MinecraftServer
-import os
+
+API_PATH = "/api/v1"
 
 app = Flask(__name__)
-api = Api(app)
-parser = reqparse.RequestParser()
-
-confFile = "/etc/productConf/mc.conf"
-
-if "dev" in os.path.abspath(os.getcwd()):
-    confFile = "/home/afercin/dev/RPI-Minecraft-Server/rpiMinecraftServer" + confFile
-
-mcserver = MinecraftServer(confFile)
 
 
-class Start(Resource):
-    def get(self):
-        if mcserver.isRunning:
-            return "Minecraft server is already running", 403
+@app.route(f"{API_PATH}/server/status", methods=["GET"])
+def server_status():
+    status = "Closed"
+    if mcserver.isClossing:
+        status = "Clossing"
+    elif mcserver.isReady:
+        status = "Ready"
+    elif mcserver.isRunning:
+        status = "Starting"
 
-        mcserver.start()
-        return "Starting minecraft server", 202
+    return jsonify({"status": status}), 200
 
 
-class Stop(Resource):
-    def get(self):
+@app.route(f"{API_PATH}/server/start", methods=["GET"])
+def server_start():
+    if mcserver.isRunning:
+        return jsonify({"msg": "Minecraft server is already running"}), 403
+
+    mcserver.start()
+    return jsonify({"msg": "Starting minecraft server"}), 202
+
+
+@app.route(f"{API_PATH}/server/stop", methods=["GET"])
+def server_stop():
+    if not mcserver.isRunning:
+        return jsonify({"msg": "Minecraft server is not running"}), 403
+
+    if not mcserver.isRunning:
+        return jsonify({"msg": "Minecraft server is being clossing"}), 403
+
+    mcserver.stop()
+    return jsonify({"msg": "Stopping minecraft server"}), 202
+
+
+@app.route(f"{API_PATH}/server/players", methods=["GET"])
+def get_server_players():
+    return jsonify(mcserver.getOnlineUsers()), 200
+
+
+@app.route(f"{API_PATH}/server/output", methods=["GET"])
+def get_server_output():
+    return jsonify({"output": mcserver.getOutput()}), 200
+
+
+@app.route(f"{API_PATH}/server/command", methods=["POST"])
+def send_server_command():
+    try:
+        command = request.args["command"]
+
         if not mcserver.isRunning:
-            return "Minecraft server is not running", 403
-
-        if mcserver.isClossing:
-            return "Minecraft server is being clossing", 403
-
-        mcserver.stop()
-        return "Stopping minecraft server", 202
-
-
-class GetStatus(Resource):
-    def get(self):
-        if mcserver.isClossing:
-            return "Clossing", 200
-        if mcserver.isReady:
-            return "Ready", 200
-        if mcserver.isRunning:
-            return "Starting", 200
-
-        return "Closed", 200
-
-class GetOnlineUsers(Resource):
-    def get(self):
-        return mcserver.getOnlineUsers()
-
-class GetOutput(Resource):
-    def get(self):
-        return mcserver.getOutput()
-
-class SendCommand(Resource):
-    def post(self, command):
-        if not mcserver.isRunning:
-            return "Minecraft server is not running", 503
+            return jsonify({"msg": "Minecraft server is not running"}), 403
         if not mcserver.isReady:
-            return "Minecraft server is not ready", 503
+            return jsonify({"msg": "Minecraft server is not ready"}), 403
 
         mcserver.sendCommand(command)
-        return "Command send sucessfully", 200
+        return jsonify({"msg": "Command send sucessfully"}), 200
 
+    except:
+        return jsonify({"msg": "Missing param 'command'"}), 403
 
-api.add_resource(Start, "/start/")
-api.add_resource(Stop, "/stop/")
-api.add_resource(GetOnlineUsers, "/online-users/")
-api.add_resource(GetStatus, "/status/")
-api.add_resource(GetOutput, "/output/")
-api.add_resource(SendCommand, "/command/")
 
 if __name__ == "__main__":
+    confFile = "/etc/productConf/mc.conf"
+    mcserver = MinecraftServer(confFile)
     app.run(debug=True, host="0.0.0.0")
