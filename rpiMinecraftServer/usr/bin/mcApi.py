@@ -1,8 +1,11 @@
 #!/usr/bin/python3
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from mcServer import MinecraftServer
+from werkzeug import secure_filename
+import os
 
 API_PATH = "/api/v1"
+MOD_FOLDER = "/tmp"
 
 app = Flask(__name__)
 
@@ -66,6 +69,26 @@ def send_server_command():
 
     except:
         return jsonify({"msg": "Missing param 'command'"}), 403
+
+
+@app.route(f"{API_PATH}/server/mods/list", methods=["GET"])
+def mod_list():
+    return jsonify([f for f in os.listdir(MOD_FOLDER) if os.path.isfile(os.path.join(MOD_FOLDER, f))]), 200
+
+
+@app.route(f"{API_PATH}/server/mods/download/<path:mod>", methods=["GET"])
+def download(mod):
+    if os.path.isfile(f"{MOD_FOLDER}/{mod}"):
+        return send_file(f"{MOD_FOLDER}/{mod}", as_attachment=True)
+    else:
+        return jsonify({"msg": f"Invalid mod name '{mod}'"}), 403
+
+
+@app.route(f"{API_PATH}/server/mods/upload", methods=["POST"])
+def upload():
+    mod = request.files['mod']
+    mod.save(secure_filename(mod.filename))
+    return jsonify({"msg": "Mod uploaded successfully"}), 200
 
 
 if __name__ == "__main__":
