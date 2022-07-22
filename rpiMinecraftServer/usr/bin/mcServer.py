@@ -16,7 +16,6 @@ class MinecraftServer:
         self.onlineUsers = []
 
         self.reset()
-        self.outputHook = threading.Thread(target=self.captureOutput)
 
     def reset(self):
         self.isRunning = False
@@ -41,6 +40,7 @@ class MinecraftServer:
             )
             print("Minecraft server started!")
             self.isRunning = True
+            self.outputHook = threading.Thread(target=self.captureOutput)
             self.outputHook.start()
 
     def stop(self):
