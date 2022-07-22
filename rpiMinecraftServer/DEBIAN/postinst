@@ -23,3 +23,6 @@ chmod 777 server.properties
 rm -rf "${MinecraftFolder}/logs"
 mkdir "${MinecraftFolder}/logs"
 chmod 777 "${MinecraftFolder}/logs"
+
+systemctl enable minecraft-server-api.service
+systemctl start minecraft-server-api.service
