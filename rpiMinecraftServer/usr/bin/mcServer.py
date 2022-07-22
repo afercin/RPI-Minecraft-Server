@@ -1,15 +1,11 @@
 import subprocess
 import threading
 import os
-import configparser
 
 
 class MinecraftServer:
 
-    def __init__(self, confFile):
-        config = configparser.ConfigParser()
-        config.read(confFile)
-
+    def __init__(self, config):
         self.minecraftFolder = config["SERVER"]["MinecraftFolder"]
         self.aditionalArgs = config["SERVER"]["AditionalArgs"]
         self.forgeVersion = config["SERVER"]["ForgeVersion"]

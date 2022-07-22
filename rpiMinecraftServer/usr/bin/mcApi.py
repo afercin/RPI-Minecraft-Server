@@ -2,12 +2,17 @@
 from flask import Flask, request, jsonify, send_file
 from mcServer import MinecraftServer
 from werkzeug import secure_filename
+import configparser
 import os
 
-API_PATH = "/api/v1"
-MOD_FOLDER = "/tmp"
-
 app = Flask(__name__)
+
+config = configparser.ConfigParser()
+config.read("/etc/productConf/mc.conf")
+
+MOD_FOLDER = f"{config['SERVER']['MinecraftFolder']}/mods"
+API_PATH = config['API']['Path']
+API_PORT = config['API']['Port']
 
 
 @app.route(f"{API_PATH}/server/status", methods=["GET"])
@@ -92,6 +97,5 @@ def upload():
 
 
 if __name__ == "__main__":
-    confFile = "/etc/productConf/mc.conf"
-    mcserver = MinecraftServer(confFile)
-    app.run(debug=True, host="0.0.0.0")
+    mcserver = MinecraftServer(config)
+    app.run(debug=True, host="0.0.0.0", port=API_PORT)
