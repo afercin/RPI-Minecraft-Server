@@ -1,0 +1,13 @@
+Source: kebabaser-minecraft-server
+Section: admin
+Priority: extra
+Maintainer: Adrián Fernández Cintado <afercin@gmail.com>
+Build-Depends: debhelper (>= 7.0.50~)
+Standards-Version: 3.8.4
+
+Package: kebabaser-minecraft-server
+Architecture: all
+Depends: openjdk-8-jdk, python3-dev
+Maintainer: Internal Pointers <info@internalpointers.com>
+Description: A program that greets you.
+ You can add a longer description here. Mind the space at the beginning of this paragraph.

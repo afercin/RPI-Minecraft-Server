@@ -26,5 +26,7 @@ rm -rf "${MinecraftFolder}/logs"
 mkdir "${MinecraftFolder}/logs"
 chmod 777 "${MinecraftFolder}/logs"
 
+mv /etc/systemd/system/mc.service /etc/systemd/system/minecraft-server-api.service
+
 systemctl enable minecraft-server-api.service
 systemctl start minecraft-server-api.service

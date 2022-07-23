@@ -1,0 +1,7 @@
+config/mc.conf              etc/productConf
+config/mc.service           etc/systemd/system
+
+source/_build/*             usr/bin
+
+config/run.sh               tmp
+config/server.properties    tmp

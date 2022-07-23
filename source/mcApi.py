@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify, send_file
 from mcServer import MinecraftServer
 from werkzeug import secure_filename
 import configparser
+import psutil
 import os
 
 app = Flask(__name__)
@@ -25,7 +26,11 @@ def server_status():
     elif mcserver.isRunning:
         status = "Starting"
 
-    return jsonify({"status": status}), 200
+    return jsonify({
+        "status": status,
+        "cpu": psutil.cpu_percent(),
+        "ram": psutil.virtual_memory().percent
+    }), 200
 
 
 @app.route(f"{API_PATH}/server/start", methods=["GET"])

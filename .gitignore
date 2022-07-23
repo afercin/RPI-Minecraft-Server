@@ -1,2 +1,12 @@
-*.deb
-*.pyc
+_build
+__pycache__
+release
+
+debian/kebabaser-minecraft-server
+
+*.debhelper*
+*.substvars
+*.buildinfo
+*.changes
+*.spec
+files

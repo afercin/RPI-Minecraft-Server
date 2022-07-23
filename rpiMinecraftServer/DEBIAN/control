@@ -1,7 +1,0 @@
-Package: RPI-Minecraft-Server
-Version: 0.1.16
-Architecture: all
-Depends: openjdk-8-jdk, python3-flask-restful
-Maintainer: Internal Pointers <info@internalpointers.com>
-Description: A program that greets you.
- You can add a longer description here. Mind the space at the beginning of this paragraph.

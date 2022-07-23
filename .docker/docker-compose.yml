@@ -1,0 +1,14 @@
+version: "3.3"
+
+services:
+    packager:
+        container_name: minecraft.server.packager
+        image: minecraft.server.packager:1.16.5
+        build: .
+        working_dir: /src
+        volumes:
+         - ..:/src
+        command: bash -c "
+            dpkg-buildpackage -b -us -uc
+            && mkdir -p release
+            && mv ../*.deb release/"
