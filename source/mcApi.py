@@ -81,6 +81,11 @@ def send_server_command():
         return jsonify({"msg": "Missing param 'command'"}), 403
 
 
+@app.route(f"{API_PATH}/server/forgeVersion", methods=["GET"])
+def forge_version():
+    return jsonify({"version": config["SERVER"]["ForgeVersion"]}), 200
+
+
 @app.route(f"{API_PATH}/server/mods/list", methods=["GET"])
 def mod_list():
     return jsonify([f for f in os.listdir(MOD_FOLDER) if os.path.isfile(os.path.join(MOD_FOLDER, f))]), 200
